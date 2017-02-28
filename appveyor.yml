@@ -7,4 +7,4 @@ environment:
           PYTHON_ARCH: "64"
 
 test_script:
-    - "%PYTHON%/python -m unittest"
+    - "%PYTHON%/python -m unittest discover -s ./cli/src/"
