@@ -14,7 +14,7 @@ class ShellTest(unittest.TestCase):
     def setUp(self):
         self.shell = shell.Shell() 
 
-    def tearDown():
+    def tearDown(self):
         pass
 
     @unittest.expectedFailure

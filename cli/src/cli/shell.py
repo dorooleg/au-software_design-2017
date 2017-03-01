@@ -1,8 +1,8 @@
-from environment import Environment
-from streams import InputStream
-from lexer import Lexer
-from parser import Parser
-import exceptions
+from cli.environment import Environment
+from cli.streams import InputStream
+from cli.lexer import Lexer
+from cli.parser import Parser
+import cli.exceptions as exceptions
 
 
 class Shell:

@@ -1,4 +1,4 @@
-from commands import RunnableCommand
+from cli.commands import RunnableCommand
 
 
 class SingleCommand(RunnableCommand):
