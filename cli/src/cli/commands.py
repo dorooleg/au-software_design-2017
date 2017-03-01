@@ -4,6 +4,9 @@ import logging
 
 class RunnableCommandResult:
     """Represents result of invoking a :class:`.RunnableCommand`.
+
+    It is more convenient to have a single class than a bunch
+    of values (output, return code, etc.).
     """
 
     def __init__(self, output_stream, new_env, ret_code):
