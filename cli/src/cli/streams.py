@@ -20,3 +20,6 @@ class OutputStream:
 
     def to_input_stream(self):
         pass
+
+    def read_output(self):
+        pass

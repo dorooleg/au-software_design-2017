@@ -1,4 +1,49 @@
 from abc import ABCMeta, abstractmethod
+import logging
+
+
+class RunnableCommandResult:
+    """Represents result of invoking a :class:`.RunnableCommand`.
+    """
+
+    def __init__(self, output_stream, new_env, ret_code):
+        """ Create CommandResult out of <output_stream, new_env, ret_code>.
+
+        `output_stream` (:module:`streams.OutputStream`): an output stream
+            of the program;
+        `new_env` (:module:`environment.Environment`): a new environment
+            in which shell should operate after executing the program.
+            For example:
+                ``x=1``
+            should return a new environment with $x equal to `1`;
+        `ret_code` (int): a return code.
+        """
+        self._output_stream = output_stream
+        self._new_env = new_env
+        self._ret_code = ret_code
+
+    def get_return_code(self):
+        """Getter for the return code.
+        """
+        return self._ret_code
+
+    def get_output(self):
+        """Read the command's output.
+
+        Returns:
+            str: a string representation of output.
+        """
+        return self._output_stream.get_output()
+
+    def get_derived_input_stream(self):
+        """Get an InputStream instance based on this program's OutputStream.
+        """
+        return self._output_stream.to_input_stream()
+
+    def get_result_environment(self):
+        """Getter for the new environment.
+        """
+        return self._new_env
 
 
 class RunnableCommand(metaclass=ABCMeta):
@@ -19,59 +64,3 @@ class ChainPipe(CommandChain):
 
     def run(self, input_stream, env):
         pass
-
-
-
-
-class SingleCommand(RunnableCommand):
-
-    def __init__(self, args_lst):
-        self.args_lst = args_lst
-
-
-class CommandExternal(SingleCommand):
-    pass
-
-
-class SingleCommandFactory:
-    registered_commands = dict()
-    
-    @staticmethod
-    def get_command_class_by_name(cmd_name):
-        cmd_cls = registered_commands.get(cmd_name, CommandExternal)
-        return cmd_cls
-
-
-def _register_single_command(command_name):
-
-    def class_decorator(cls):
-        SingleCommandFactory.registered_commands[command_name] = cls
-        return cls
-
-    return class_decorator
-
-
-@_register_single_command('echo')
-class CommandEcho(SingleCommand):
-    pass
-
-
-@_register_single_command('wc')
-class CommandWc(SingleCommand):
-    pass
-
-
-@_register_single_command('cat')
-class CommandCat(SingleCommand):
-    pass
-
-
-@_register_single_command('pwd')
-class CommandPwd(SingleCommand):
-    pass
-
-
-@_register_single_command('exit')
-class CommandExit(SingleCommand):
-    pass
-

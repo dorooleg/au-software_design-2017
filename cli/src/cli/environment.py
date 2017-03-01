@@ -5,14 +5,14 @@ class Environment:
     def __init__(self):
         pass
 
-    def get_var(self, name: str) -> str:
+    def get_var(self, name):
         pass
 
-    def set_var(self, name: std, value: str):
+    def set_var(self, name, value):
         pass
 
-    def get_cwd(self) -> pathlib.Path:
+    def get_cwd(self):
         pass
 
-    def set_cwd(self, dir_name: str):
+    def set_cwd(self, dir_name):
         pass
