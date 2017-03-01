@@ -11,6 +11,7 @@ Welcome to Software Design 2017: Command-Line Interface's documentation!
    :caption: Contents:
 
    architecture 
+   code
 
 
 

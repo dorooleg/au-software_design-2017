@@ -17,9 +17,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+import os.path
+sys.path.insert(0, os.path.join(os.path.dirname(__name__), '..', 'src'))
 
 
 # -- General configuration ------------------------------------------------
@@ -33,6 +34,7 @@
 # ones.
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.coverage',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode']
 
 # Add any paths that contain templates here, relative to this directory.
