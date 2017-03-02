@@ -1,6 +1,3 @@
-import logging
-import enum
-
 """ A module with Preprocessor responsibility.
 
 This module holds the Preprocessor - an entity
@@ -11,6 +8,8 @@ an environment.
 Preprocessing is a common action in programming languages,
 so we use it in interpreting Shell commands as well.
 """
+import logging
+import enum
 
 
 @enum.unique
@@ -68,7 +67,7 @@ class Preprocessor:
 
         Example:
             If the environment contains::
- 
+
                 x=1
                 long_name=qwe
 
@@ -95,7 +94,7 @@ class Preprocessor:
 
             if next_var_info:
                 (nonvar_part, var_name,
-                        unprocessed_part, autom_state) = next_var_info
+                 unprocessed_part, autom_state) = next_var_info
                 processed_prefix += nonvar_part
                 processed_prefix += env.get_var(var_name)
 
@@ -104,7 +103,8 @@ class Preprocessor:
                 processed_prefix += unprocessed_suffix
                 unprocessed_suffix = ''
 
-        logging.info('Preprocessor: """{}""" processed to """{}"""'.format(raw_str, processed_prefix))
+        logging.info('Preprocessor: """{}""" processed\
+                to """{}"""'.format(raw_str, processed_prefix))
         return processed_prefix
 
     @staticmethod
@@ -126,10 +126,10 @@ class Preprocessor:
             Otherwise, return None.
         """
         read_idx = 0
-        sz = len(raw_str)
+        sz_raw = len(raw_str)
         var_name = ''
 
-        while read_idx < sz:
+        while read_idx < sz_raw:
             cur_char = raw_str[read_idx]
 
             if autom_state == _PreprocessorAutomataState.INITIAL_STATE:

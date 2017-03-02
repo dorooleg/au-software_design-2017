@@ -1,14 +1,7 @@
-from cli.environment import Environment
-from cli.streams import InputStream
-from cli.lexer import Lexer
-from cli.parser import Parser
-from cli.preprocessor import Preprocessor
-import cli.exceptions as exceptions
-
 """The main module that uses other modules.
 
 This module has a class Shell which does
-all the shell work: 
+all the shell work:
 
     - read an input
     - call an appropriate module to preprocess input
@@ -17,6 +10,12 @@ all the shell work:
     - invoke the program represented by (sort of) AST.
 
 """
+from cli.environment import Environment
+from cli.streams import InputStream
+from cli.lexer import Lexer
+from cli.parser import Parser
+from cli.preprocessor import Preprocessor
+import cli.exceptions as exceptions
 
 
 class Shell:
@@ -24,7 +23,7 @@ class Shell:
 
     Has an :class:`environment.Environment` inside.
 
-    Create an instance and run `main_loop` 
+    Create an instance and run `main_loop`
     if you want to interact with user, like this::
 
         shell = Shell()
@@ -46,7 +45,7 @@ class Shell:
         Returns:
             :class:`commands.RunnableCommandResult`.
         """
-        preprocessed_inp = Preprocessor.substitute_environment_variables(inp, self.env)
+        preprocessed_inp = Preprocessor.substitute_environment_variables(inp, self._env)
         lexems = Lexer.get_lexems(preprocessed_inp)
         runnable = Parser.build_command(lexems)
         return runnable.run(InputStream.get_empty_inputstream(), self._env)
@@ -79,9 +78,9 @@ class Shell:
                 if ret_code != 0:
                     print('Process exited with error code {}'.format(ret_code))
             except exceptions.ParseException as ex:
-                print('Parsing exception occured:\n{}'.format(str(e)))
+                print('Parsing exception occured:\n{}'.format(str(ex)))
             except exceptions.LexException as ex:
-                print('Lexing exception occured:\n{}'.format(str(e)))
+                print('Lexing exception occured:\n{}'.format(str(ex)))
             except exceptions.ExitException:
                 user_asked_exit = True
 

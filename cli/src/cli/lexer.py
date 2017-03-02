@@ -1,9 +1,3 @@
-import enum
-import logging
-
-from cli.exceptions import LexException
-
-
 """A module with Lexer responsibility.
 
 Lexing is a common step in language
@@ -11,6 +5,10 @@ compilation or interpreting. A lexem
 is a group of tokens of the input
 stream, grouped by some "meaning".
 """
+import enum
+import logging
+
+from cli.exceptions import LexException
 
 
 @enum.unique
@@ -103,12 +101,13 @@ class Lexer:
         while unprocessed_part:
             start_index = orig_size - len(unprocessed_part)
             next_lexem, unprocessed_part = Lexer._get_first_lexem(unprocessed_part,
-                    start_index)
+                                                                  start_index)
             unprocessed_part = unprocessed_part.lstrip()
             lexem_list.append(next_lexem)
-       
-        logging.debug('Lexer: {} was lexed to {}'.format(raw_str,
-            ','.join(map(lambda lex: lex.get_type().name, lexem_list))))
+
+        logging.debug('Lexer: {} was lexed\
+                to {}'.format(raw_str,
+                              ','.join(map(lambda lex: lex.get_type().name, lexem_list))))
         return lexem_list
 
     @staticmethod
@@ -127,7 +126,7 @@ class Lexer:
 
         if raw_str[0] == '|':
             return (Lexem(LexemType.PIPE, '|', start_idx_in_original,
-                          start_idx_in_original), 
+                          start_idx_in_original),
                     raw_str[1:])
         elif raw_str[0] in ('"', "'"):
             next_quote_idx = 1
@@ -159,7 +158,7 @@ class Lexer:
 
             if '=' in lexem_val:
                 return (Lexem(LexemType.ASSIGNMENT, lexem_val,
-                              start_idx_in_original, 
+                              start_idx_in_original,
                               start_idx_in_original + whitespace_or_quote_idx - 1),
                         rest_string)
 

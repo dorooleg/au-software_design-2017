@@ -1,12 +1,9 @@
-from abc import ABCMeta, abstractmethod
-import logging
-
 """Abstractions of commands and their results.
 
 In principle, we have two types of commands:
 
     - a single command, like ``wc`` or ``cat``. It accepts
-        input, returns something, etc. 
+        input, returns something, etc.
         This is represented by :class:`.SingleCommand`.
 
     - a combination of commands, like ``pwd | wc``. It consists
@@ -14,13 +11,15 @@ In principle, we have two types of commands:
         by some rules. This is represented by :class:`.ChainCommand`.
 
 Since each command has the same interface (i.e. it can run,
-given input and environment), the above classes share a 
+given input and environment), the above classes share a
 common base class, which represents an abstract command -
 :class:`.RunnableCommand`.
 
 This module also contains an abstraction of a command run
 result.
 """
+from abc import ABCMeta, abstractmethod
+import logging
 
 
 class RunnableCommandResult:

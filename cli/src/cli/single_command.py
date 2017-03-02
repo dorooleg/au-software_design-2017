@@ -1,5 +1,3 @@
-from cli.commands import RunnableCommand, SingleCommand
-
 """Concrete SingleCommand's and their Factory.
 
 Since there can be many SingleCommand's (cat,
@@ -10,6 +8,9 @@ There is a Factory class that "knows"
 how to choose an appropriate Command
 given it's string representation.
 """
+from cli.commands import SingleCommand
+
+import logging
 
 
 class CommandExternal(SingleCommand):
@@ -22,10 +23,10 @@ class SingleCommandFactory:
 
     @staticmethod
     def get_command_class_by_name(cmd_name):
-        cmd_cls = registered_commands.get(cmd_name, CommandExternal)
+        cmd_cls = SingleCommandFactory.registered_commands.get(cmd_name, CommandExternal)
         logging.debug('SingleCommandFactory:\
                 Class {} is responsible for invoking command {}'.format(
-            cmd_cls, cmd_name))
+                    cmd_cls, cmd_name))
         return cmd_cls
 
 

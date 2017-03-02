@@ -1,9 +1,8 @@
-import pathlib 
-import os
-import logging
-
 """Abstraction of shell environment.
 """
+import pathlib
+import os
+import logging
 
 
 class Environment:
