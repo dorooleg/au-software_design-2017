@@ -13,5 +13,5 @@ before_install:
     - pip install codecov
 
 after_success:
-    codecov
-    pylint --no-docstring-rgx=_* ./cli/src/cli 
+    - codecov
+    - pylint --no-docstring-rgx=_* ./cli/src/cli 
