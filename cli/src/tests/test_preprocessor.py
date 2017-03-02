@@ -22,6 +22,10 @@ class PreprocessortTest(unittest.TestCase):
         processed_string = self.preproc('echo "123$x"')
         self.assertEqual(processed_string, 'echo "1231"')
 
+    def test_only_var(self):
+        processed_string = self.preproc('$x')
+        self.assertEqual(processed_string, '1')
+
     def test_var_space_eol(self):
         processed_string = self.preproc('echo "123$x "')
         self.assertEqual(processed_string, 'echo "1231 "')
@@ -62,3 +66,7 @@ class PreprocessortTest(unittest.TestCase):
     def test_var_in_single_quote(self):
         processed_string = self.preproc("echo '$x''$y'")
         self.assertEqual(processed_string, "echo '$x''$y'")
+
+    def test_stray_dollar(self):
+        processed_string = self.preproc("echo $ \"$\" '$'")
+        self.assertEqual(processed_string, "echo $ \"$\" '$'")
