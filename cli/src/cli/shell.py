@@ -11,10 +11,11 @@ class Shell:
     Has an :class:`environment.Environment` inside.
 
     Create an instance and run `main_loop` 
-    if you want to interact with user, like this:
+    if you want to interact with user, like this::
 
         shell = Shell()
         shell.main_loop()
+
     """
 
     def __init__(self):

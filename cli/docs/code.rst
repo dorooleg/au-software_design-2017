@@ -11,7 +11,6 @@ Shell module
 
 Commands module
 ===============
-A multi-layer abstraction on "program".
 
 .. automodule:: cli.commands
     :members:
@@ -20,4 +19,11 @@ Preprocessor module
 ===================
 
 .. automodule:: cli.preprocessor
+    :members:
+
+
+Lexer module
+============
+
+.. automodule:: cli.lexer
     :members:

@@ -27,8 +27,9 @@ class Preprocessor:
 
         Args:
             raw_str (str): an initial, unprocessed string;
+
             env (:class:`environment.Environment`): an environment
-            in which this string must be expanded.
+                in which this string must be expanded.
 
         Returns:
             str. The processed string.
