@@ -56,8 +56,8 @@ class PreprocessortTest(unittest.TestCase):
         self.assertEqual(processed_string, "echo 59 1")
 
     def test_vars_together(self):
-        processed_string = self.preproc("echo $y$x")
-        self.assertEqual(processed_string, "echo 591")
+        processed_string = self.preproc("echo $long_name$x")
+        self.assertEqual(processed_string, "echo qwe1")
 
     def test_vars_together_dquoted(self):
         processed_string = self.preproc("echo \"$y$x\"")
@@ -68,5 +68,13 @@ class PreprocessortTest(unittest.TestCase):
         self.assertEqual(processed_string, "echo '$x''$y'")
 
     def test_stray_dollar(self):
-        processed_string = self.preproc("echo $ \"$\" '$'")
-        self.assertEqual(processed_string, "echo $ \"$\" '$'")
+        processed_string = self.preproc("echo $ \"$\" '$' \"$ \"")
+        self.assertEqual(processed_string, "echo $ \"$\" '$' \"$ \"")
+
+    def test_double_dollar(self)
+        processed_string = self.preproc("echo $$x \"$$y\"")
+        self.assertEqual(processed_string, "echo $1 \"$59\"")
+
+    def test_quote_after_dollar(self):
+        processed_string = self.preproc("echo $'' $\"\"")
+        self.assertEqual(processed_string, "echo $'' $\"\"")
