@@ -18,32 +18,48 @@ class ShellTest(unittest.TestCase):
         pass
 
     @unittest.expectedFailure
-    def test_var_expansion(self):
-        """Test that string expansion (single and double quotes) works well.
+    def test_sample_from_presentation(self):
+        """A test from hwproj presentation.
+
+        >echo "Hello, world!"
+        Hello, world!
+        > FILE=example.txt
+        > cat $FILE
+        Some example text
+        > cat example.txt | wc
+        1 3 18
+        > echo 123 | wc
+        1 1 3
         """
-        command_result = self.shell.process_input('x=qwe')
-        self.shell.apply_command_result(command_result)
+        command_result = self.shell.process_input('echo "Hello, world!"')
+        self.assertEqual(command_result.get_output(), 
+                'Hello, world!')
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input("""echo '123$x' "45$x" """)
-        self.assertEqual(command_result.get_output(), '123$x 45asb')
+        command_result = self.shell.process_input('FILE=example.txt')
+        self.assertEqual(command_result.get_output(), '')
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input("""echo $x""")
-        self.assertEqual(command_result.get_output(), 'asb')
+        command_result = self.shell.process_input('cat $FILE')
+        self.assertEqual(command_result.get_output(), 'Some example text')
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input("""echo "45$x " """)
-        self.assertEqual(command_result.get_output(), '45asb')
+        command_result = self.shell.process_input('cat example.txt | wc')
+        self.assertEqual(command_result.get_output(), '1 3 18')
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input("""echo "45$x bla" """)
-        self.assertEqual(command_result.get_output(), '45asb bla')
+        command_result = self.shell.process_input('echo 123 | wc')
+        self.assertEqual(command_result.get_output(), '1 1 3')
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input("""echo "45$xbla" """)
-        self.assertEqual(command_result.get_output(), '45')
-        self.assertEqual(command_result.get_return_code(), 0)
+    @unittest.expectedFailure
+    def test_subst_exit(self):
+        """Test that string expansion works for substituting commands.
+        """
+        command_result = self.shell.process_input('x=exit')
+        self.assertRaises(exceptions.ExitException,
+                self.shell.process_input, '$x')
+
 
     @unittest.expectedFailure
     def test_cat_wc(self):
@@ -51,7 +67,7 @@ class ShellTest(unittest.TestCase):
         """
         command_result = self.shell.process_input('cd {}'.format(BASE_DIR))
         command_result = self.shell.process_input('cat wc_file.txt | wc')
-        self.assertEqual(command_result.get_output(), '      2       6      24')
+        self.assertEqual(command_result.get_output(), '2 6 24')
 
 
     @unittest.expectedFailure
