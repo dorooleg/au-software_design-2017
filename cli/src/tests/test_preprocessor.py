@@ -6,6 +6,8 @@ from cli.environment import Environment
 
 
 class PreprocessortTest(unittest.TestCase):
+    """Tests on preprocessing: whether string variables are exapnded OK.
+    """
     
     def setUp(self):
         env = Environment()

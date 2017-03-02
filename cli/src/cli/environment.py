@@ -23,6 +23,10 @@ class Environment:
 
     def set_var(self, name, value):
         """Set variable value.
+
+        Args:
+            name (str): variable name.
+            value (str): variable value (it should be string).
         """
         self._var_to_value[name] = value
 
@@ -33,6 +37,9 @@ class Environment:
 
     def set_cwd(self, dir_name):
         """Set current working directory.
+
+        Do not check that the directory exists: we don't really care,
+        it is just a string.
 
         Args:
             dir_name (str): string representation of a new working
