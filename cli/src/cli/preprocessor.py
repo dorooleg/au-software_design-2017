@@ -1,9 +1,9 @@
 import logging
-from enum import Enum
+import enum
 
 
 @enum.unique
-class _PreprocessorAutomataState(Enum):
+class _PreprocessorAutomataState(enum.Enum):
     INITIAL_STATE = 1
     INSIDE_DOUBLE_QUOTES = 2
     INSIDE_SINGLE_QUOTES = 3
@@ -72,7 +72,7 @@ class Preprocessor:
         autom_state = _PreprocessorAutomataState.INITIAL_STATE
 
         while unprocessed_suffix:
-            next_var_info = self._find_next_var(unprocessed_suffix, autom_state)
+            next_var_info = Preprocessor._find_next_var(unprocessed_suffix, autom_state)
 
             if next_var_info:
                 (nonvar_part, var_name, 
