@@ -1,8 +1,9 @@
 import unittest
+import os.path
+
 from cli import shell
 from cli import exceptions
 
-import os.path
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

@@ -9,6 +9,13 @@ Shell module
     :members:
 
 
+Environment module
+==================
+
+.. automodule:: cli.environment
+    :members:
+
+
 Commands module
 ===============
 
@@ -27,3 +34,25 @@ Lexer module
 
 .. automodule:: cli.lexer
     :members:
+
+
+Parser module
+=============
+
+.. automodule:: cli.parser
+    :members:
+
+
+Streams module
+==============
+
+.. automodule:: cli.streams
+    :members:
+
+
+Single commands module
+======================
+.. automodule:: cli.single_command 
+    :members:
+
+

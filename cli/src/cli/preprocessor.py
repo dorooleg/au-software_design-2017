@@ -1,6 +1,17 @@
 import logging
 import enum
 
+""" A module with Preprocessor responsibility.
+
+This module holds the Preprocessor - an entity
+that accepts raw string as input, and expands
+variables (in the form ``$x``) according to
+an environment.
+
+Preprocessing is a common action in programming languages,
+so we use it in interpreting Shell commands as well.
+"""
+
 
 @enum.unique
 class _PreprocessorAutomataState(enum.Enum):
@@ -57,7 +68,7 @@ class Preprocessor:
 
         Example:
             If the environment contains::
-            
+ 
                 x=1
                 long_name=qwe
 
@@ -83,7 +94,7 @@ class Preprocessor:
             next_var_info = Preprocessor._find_next_var(unprocessed_suffix, autom_state)
 
             if next_var_info:
-                (nonvar_part, var_name, 
+                (nonvar_part, var_name,
                         unprocessed_part, autom_state) = next_var_info
                 processed_prefix += nonvar_part
                 processed_prefix += env.get_var(var_name)

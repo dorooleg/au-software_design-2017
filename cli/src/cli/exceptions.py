@@ -1,3 +1,6 @@
+"""A container for all shell-related exceptions.
+"""
+
 
 class ShellException(Exception):
     pass

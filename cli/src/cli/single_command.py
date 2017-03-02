@@ -1,10 +1,15 @@
-from cli.commands import RunnableCommand
+from cli.commands import RunnableCommand, SingleCommand
 
+"""Concrete SingleCommand's and their Factory.
 
-class SingleCommand(RunnableCommand):
+Since there can be many SingleCommand's (cat,
+echo, wc, ..., you name it), it is convenient
+to have them in a separate module.
 
-    def __init__(self, args_lst):
-        self.args_lst = args_lst
+There is a Factory class that "knows"
+how to choose an appropriate Command
+given it's string representation.
+"""
 
 
 class CommandExternal(SingleCommand):
@@ -12,6 +17,7 @@ class CommandExternal(SingleCommand):
 
 
 class SingleCommandFactory:
+
     registered_commands = dict()
 
     @staticmethod

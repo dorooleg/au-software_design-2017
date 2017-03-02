@@ -2,7 +2,21 @@ from cli.environment import Environment
 from cli.streams import InputStream
 from cli.lexer import Lexer
 from cli.parser import Parser
+from cli.preprocessor import Preprocessor
 import cli.exceptions as exceptions
+
+"""The main module that uses other modules.
+
+This module has a class Shell which does
+all the shell work: 
+
+    - read an input
+    - call an appropriate module to preprocess input
+    - call an appropriate module to lex input
+    - call an appropriate module to parse lexems
+    - invoke the program represented by (sort of) AST.
+
+"""
 
 
 class Shell:
@@ -32,7 +46,8 @@ class Shell:
         Returns:
             :class:`commands.RunnableCommandResult`.
         """
-        lexems = Lexer.get_lexems(inp)
+        preprocessed_inp = Preprocessor.substitute_environment_variables(inp, self.env)
+        lexems = Lexer.get_lexems(preprocessed_inp)
         runnable = Parser.build_command(lexems)
         return runnable.run(InputStream.get_empty_inputstream(), self._env)
 
@@ -63,11 +78,11 @@ class Shell:
                 ret_code = command_result.get_return_code()
                 if ret_code != 0:
                     print('Process exited with error code {}'.format(ret_code))
-            except ParseException as e:
+            except exceptions.ParseException as ex:
                 print('Parsing exception occured:\n{}'.format(str(e)))
-            except LexException as e:
+            except exceptions.LexException as ex:
                 print('Lexing exception occured:\n{}'.format(str(e)))
-            except ExitException:
+            except exceptions.ExitException:
                 user_asked_exit = True
 
         print('Bye!')

@@ -2,6 +2,9 @@ import pathlib
 import os
 import logging
 
+"""Abstraction of shell environment.
+"""
+
 
 class Environment:
     """A shell environment, in which commands run.

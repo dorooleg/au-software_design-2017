@@ -4,6 +4,15 @@ import logging
 from cli.exceptions import LexException
 
 
+"""A module with Lexer responsibility.
+
+Lexing is a common step in language
+compilation or interpreting. A lexem
+is a group of tokens of the input
+stream, grouped by some "meaning".
+"""
+
+
 @enum.unique
 class LexemType(enum.Enum):
     """Possible types of Lexems that Lexer produces.

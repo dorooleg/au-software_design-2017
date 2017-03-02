@@ -1,3 +1,10 @@
+"""Abstractions of command input and output.
+
+Every command accepts some input and results
+in some output. This module contains abstractions
+on this ideas.
+"""
+
 
 class InputStream:
 
