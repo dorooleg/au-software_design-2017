@@ -71,7 +71,7 @@ class PreprocessortTest(unittest.TestCase):
         processed_string = self.preproc("echo $ \"$\" '$' \"$ \"")
         self.assertEqual(processed_string, "echo $ \"$\" '$' \"$ \"")
 
-    def test_double_dollar(self)
+    def test_double_dollar(self):
         processed_string = self.preproc("echo $$x \"$$y\"")
         self.assertEqual(processed_string, "echo $1 \"$59\"")
 
