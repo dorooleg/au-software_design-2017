@@ -2,3 +2,6 @@ __pycache__
 .*.swp
 .coverage
 *.pyc
+
+*.js
+*.html
