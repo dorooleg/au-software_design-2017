@@ -9,7 +9,8 @@ before_script:
 script: coverage run -m unittest discover -s ./cli/src/tests
 
 before_install:
-    - pip install pylint3
+    - sudo apt-get update -qq -y
+    - sudo apt-get install -qq -y pylint3
     - pip install codecov
 
 after_success:
