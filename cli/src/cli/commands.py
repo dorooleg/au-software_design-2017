@@ -79,11 +79,11 @@ class RunnableCommand(metaclass=ABCMeta):
 class CommandChain(RunnableCommand):
 
     def __init__(self, cmd1, cmd2):
-        self.cmd_left = cmd1
-        self.cmd_right = cmd2
+        self._cmd_left = cmd1
+        self._cmd_right = cmd2
 
 
-class ChainPipe(CommandChain):
+class CommandChainPipe(CommandChain):
 
     def run(self, input_stream, env):
         pass
@@ -93,3 +93,9 @@ class SingleCommand(RunnableCommand):
 
     def __init__(self, args_lst):
         self.args_lst = args_lst
+
+
+class CommandAssignment(SingleCommand):
+
+    def run(self, input_stream, env):
+        pass
