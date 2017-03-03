@@ -48,7 +48,7 @@ class Shell:
         preprocessed_inp = Preprocessor.substitute_environment_variables(inp, self._env)
         lexems = Lexer.get_lexems(preprocessed_inp)
         runnable = Parser.build_command(lexems)
-        return runnable.run(InputStream.get_empty_inputstream(), self._env)
+        return runnable.run(InputStream(), self._env)
 
     def apply_command_result(self, command_result):
         """Take some programs result into account, i.e. change Shell's state.

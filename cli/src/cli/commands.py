@@ -29,11 +29,11 @@ class RunnableCommandResult:
     of values (output, return code, etc.).
     """
 
-    def __init__(self, output_stream, new_env, ret_code):
+    def __init__(self, input_stream, new_env, ret_code): 
         """ Create CommandResult out of <output_stream, new_env, ret_code>.
 
-        `output_stream` (:module:`streams.OutputStream`): an output stream
-            of the program;
+        `input_stream` (:module:`streams.InputStream`): an input stream
+            of the program, from which we can read what the program wrote;
         `new_env` (:module:`environment.Environment`): a new environment
             in which shell should operate after executing the program.
             For example:
@@ -41,7 +41,7 @@ class RunnableCommandResult:
             should return a new environment with $x equal to `1`;
         `ret_code` (int): a return code.
         """
-        self._output_stream = output_stream
+        self._input_stream = input_stream
         self._new_env = new_env
         self._ret_code = ret_code
 
@@ -56,12 +56,12 @@ class RunnableCommandResult:
         Returns:
             str: a string representation of output.
         """
-        return self._output_stream.get_output()
+        return self._input_stream.read_input()
 
-    def get_derived_input_stream(self):
-        """Get an InputStream instance based on this program's OutputStream.
+    def get_input_stream(self):
+        """Getter for the input stream.
         """
-        return self._output_stream.to_input_stream()
+        return self._input_stream
 
     def get_result_environment(self):
         """Getter for the new environment.

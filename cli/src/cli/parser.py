@@ -39,7 +39,7 @@ class Parser:
         where ASSIGNMENT, QUOTED_STRING, STRING and PIPE are lexems.
 
         Every rule is implemented as a static method with name _parse_`smth`.
-        It returns a pair: 
+        It returns a pair:
 
             - a resulting :class:`commands.RunnableCommand`
             - a list of unparsed lexems
@@ -57,13 +57,13 @@ class Parser:
         """Consume a lexem of the desired type. Return list of lexems without consumed one.
 
         Raises:
-            ParseException, if the list is empty or the first lexem is not 
+            ParseException, if the list is empty or the first lexem is not
                 of a type `desired_lexem_type`.
         """
         if not lexem_list:
             raise ParseException('Expected lexem of type {}, found\
                                   none.'.format(desired_lexem_type.name))
-            
+
         if lexem_list[0].get_type() != desired_lexem_type:
             raise ParseException('Expected lexem of type {}, found\
                                   lexem of type {}.'.format(desired_lexem_type.name,
@@ -83,7 +83,7 @@ class Parser:
             result_command = CommandChainPipe(result_command, current_command)
 
         return result_command, unparsed_lexems
-    
+
     @staticmethod
     def _parse_command(lexems):
         try:
