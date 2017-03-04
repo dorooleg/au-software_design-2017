@@ -14,7 +14,7 @@ class _BaseStream:
     Both streams are implemented as a wrapper above io.StringIO.
     So, technically, they are reading and writing from a in-memory string.
     """
-    
+
     def __init__(self):
         """Construct a Stream (both Input and Output).
         """
@@ -54,7 +54,7 @@ class OutputStream(_BaseStream):
         """Convert this OutputStream to an InputStream.
 
         As a result of pipe, e.g. "echo 123 | wc", a command's
-        output becomes another command's input. 
+        output becomes another command's input.
         """
         inp_stream = InputStream()
         inp_stream._io_obj.write(self._io_obj.getvalue())

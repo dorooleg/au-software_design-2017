@@ -38,6 +38,7 @@ class ShellTest(unittest.TestCase):
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('FILE=example.txt')
+        self.shell.apply_command_result(command_result)
         self.assertEqual(command_result.get_output(), '')
         self.assertEqual(command_result.get_return_code(), 0)
 
@@ -58,6 +59,7 @@ class ShellTest(unittest.TestCase):
         """Test that string expansion works for substituting commands.
         """
         command_result = self.shell.process_input('x=exit')
+        self.shell.apply_command_result(command_result)
         self.assertRaises(exceptions.ExitException,
                 self.shell.process_input, '$x')
 
@@ -78,3 +80,11 @@ class ShellTest(unittest.TestCase):
         command_result = self.shell.process_input('cd {}'.format(BASE_DIR))
         command_result = self.shell.process_input('pwd')
         self.assertEqual(command_result.get_output(), BASE_DIR)
+
+    @unittest.expectedFailure
+    def test_repeatable_commands(self):
+        """A `long` session with a user should not fail.
+        """
+        for i in range(1000):
+            command_result = self.shell.process_input('echo 1=1')
+            self.assertEqual(command_result.get_output(), '1=1')

@@ -29,7 +29,7 @@ class RunnableCommandResult:
     of values (output, return code, etc.).
     """
 
-    def __init__(self, input_stream, new_env, ret_code): 
+    def __init__(self, input_stream, new_env, ret_code):
         """ Create CommandResult out of <output_stream, new_env, ret_code>.
 
         `input_stream` (:module:`streams.InputStream`): an input stream
@@ -70,32 +70,88 @@ class RunnableCommandResult:
 
 
 class RunnableCommand(metaclass=ABCMeta):
+    """An abstraction of every possible shell command (in broad sense).
+
+    A command can be run.
+    This is an abstract class.
+    """
 
     @abstractmethod
     def run(self, input_stream, env):
+        """Main action with the command: run it, given input and environment.
+
+        Args:
+            input_stream (:class:`streams.InputStream`): an input for this command;
+            env (:class:`environment.Environment`): an environment in which command runs.
+
+        Returns:
+            :class:`.RunnableCommandResult`.
+        """
         return NotImplemented
 
 
 class CommandChain(RunnableCommand):
+    """A subset of commands: those which take two commands and combine them.
+
+    This is an abstract class.
+    """
 
     def __init__(self, cmd1, cmd2):
+        """Every CommandChain is constructed out of two commands.
+        """
         self._cmd_left = cmd1
         self._cmd_right = cmd2
 
 
 class CommandChainPipe(CommandChain):
+    """Pipe: take one command's output and put into other command as input.
+
+    The second command can ignore the input whatsoever.
+    One can chain environment variable assignments using Pipe. All assignments
+    will take place.
+
+    If the first command fails (i.e. completes with non-zero status),
+    then the result of Pipe is equal to the result of the first command
+    (i.e. the second command is `not` run).
+
+    Examples::
+        cat test.txt | wc
+        echo 123 | pwd
+        x=1 | y=2
+    """
 
     def run(self, input_stream, env):
         pass
 
 
 class SingleCommand(RunnableCommand):
+    """A subset of commands: those which can execute on them own.
+
+    This is an abstract class.
+    """
 
     def __init__(self, args_lst):
+        """Every SingleCommand is created out of arguments list.
+
+        Example of arguments::
+            python3 test.py xxx     -->    ['python3', 'test.py', 'xxx']
+            echo "a b c d" 'wr tr$x' -->   ['echo', '"a b c d"', "'wr tr$x'"]
+            x=1                     -->    ['x=1']
+
+        Every descandant of this class describes which arguments it expects
+        to see.
+        """
         self.args_lst = args_lst
 
 
 class CommandAssignment(SingleCommand):
+    """An environment assignment.
+
+    Modifies the environment, reassigning one variable's value.
+
+    Command args:
+        0 -- string of the form ``var=value``.
+    """
 
     def run(self, input_stream, env):
         pass
