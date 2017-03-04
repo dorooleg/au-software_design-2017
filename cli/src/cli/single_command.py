@@ -68,8 +68,8 @@ class SingleCommandFactory:
     @staticmethod
     def _get_command_class_by_name(cmd_name):
         cmd_cls = SingleCommandFactory.registered_commands.get(cmd_name, CommandExternal)
-        logging.debug('SingleCommandFactory:\
-                Class {} is responsible for invoking command {}'.format(
+        logging.debug('SingleCommandFactory:' \
+                      'Class {} is responsible for invoking command {}'.format(
                     cmd_cls, cmd_name))
         return cmd_cls
 

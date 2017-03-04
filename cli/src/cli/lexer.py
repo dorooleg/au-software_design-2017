@@ -110,8 +110,8 @@ class Lexer:
             unprocessed_part = unprocessed_part.lstrip()
             lexem_list.append(next_lexem)
 
-        logging.debug('Lexer: {} was lexed\
-                to {}'.format(raw_str,
+        logging.debug('Lexer: {} was lexed '\
+                      'to {}'.format(raw_str,
                               ','.join(map(lambda lex: lex.get_type().name, lexem_list))))
         return lexem_list
 

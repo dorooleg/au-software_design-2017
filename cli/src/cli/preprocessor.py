@@ -103,8 +103,8 @@ class Preprocessor:
                 processed_prefix += unprocessed_suffix
                 unprocessed_suffix = ''
 
-        logging.info('Preprocessor: """{}""" processed\
-                to """{}"""'.format(raw_str, processed_prefix))
+        logging.info('Preprocessor: """{}""" processed ' \
+                     'to """{}"""'.format(raw_str, processed_prefix))
         return processed_prefix
 
     @staticmethod

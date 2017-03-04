@@ -24,7 +24,7 @@ class CommandsTest(unittest.TestCase):
         self.build_cmd = SingleCommandFactory.build_command
 
     def test_assignment(self):
-        cmd = self.build_cmd([Lexem(LexemType.ASSIGNMENT, 'qwerty=123', 0, 10)])
+        cmd = CommandAssignment([Lexem(LexemType.ASSIGNMENT, 'qwerty=123', 0, 10).get_value()])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
         self.assertEqual(cmd_result.get_result_environment().get_var('qwerty'), '123')
@@ -49,7 +49,7 @@ class CommandsTest(unittest.TestCase):
     def test_exit_command(self):
         cmd = self.build_cmd([Lexem(LexemType.STRING, 'exit', 0, 3)])
         
-        assertRaises(ExitException, cmd.run, self.init_input, self.init_env)
+        self.assertRaises(ExitException, cmd.run, self.init_input, self.init_env)
 
     def test_cd_command(self):
         cmd = self.build_cmd([Lexem(LexemType.STRING, 'cd', 0, 1),
