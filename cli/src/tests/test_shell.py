@@ -33,7 +33,7 @@ class ShellTest(unittest.TestCase):
         """
         command_result = self.shell.process_input('echo "Hello, world!"')
         self.assertEqual(command_result.get_output(), 
-                'Hello, world!\n')
+                'Hello, world!{}'.format(os.linesep))
         self.assertEqual(command_result.get_return_code(), 0)
 
         # This `cd` is necessary for finding `example.txt` file.

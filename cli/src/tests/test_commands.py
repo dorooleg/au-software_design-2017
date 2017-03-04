@@ -35,10 +35,11 @@ class CommandsTest(unittest.TestCase):
     def test_external_command(self):
         cmd = self.build_cmd([Lexem(LexemType.STRING, sys.executable, 0, 7),
                                  Lexem(LexemType.STRING, '-c', 8, 10),
-                                 Lexem(LexemType.QUOTED_STRING, "'print(\"hello\")'", 11, 20)])
+                                 Lexem(LexemType.QUOTED_STRING, 
+                                       "'print(\"hello\", end='')'", 11, 20)])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), 'hello{}'.format(os.linesep))
+        self.assertEqual(cmd_result.get_output(), 'hello')
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_external_command_nonexistant(self):
