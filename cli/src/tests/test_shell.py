@@ -52,7 +52,8 @@ class ShellTest(unittest.TestCase):
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('echo 123 | wc')
-        self.assertEqual(command_result.get_output(), '1 1 4')
+        exp_length = 3 + len(os.linesep)
+        self.assertEqual(command_result.get_output(), '1 1 {}'.format(exp_length))
         self.assertEqual(command_result.get_return_code(), 0)
 
     def test_subst_exit(self):
