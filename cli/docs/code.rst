@@ -1,4 +1,17 @@
 
+Installation and usage
+======================
+
+In order to run this shell, you need ``Python 3.6``.
+No other packages needed.
+
+Example usage::
+
+    cd ./cli/src/
+    python3.6 main.py
+
+This package is continiously tested on Linux (using Travis CI) and Windows (using AppVeyor).
+Code coverage is beign run in Travis. This ensures stable and cross-platform pleasant user experience.
 
 .. automodule:: cli
 
@@ -20,6 +33,11 @@ Commands module
 ===============
 
 .. automodule:: cli.commands
+    :members:
+
+Single commands module
+======================
+.. automodule:: cli.single_command 
     :members:
 
 Preprocessor module
@@ -50,9 +68,8 @@ Streams module
     :members:
 
 
-Single commands module
-======================
-.. automodule:: cli.single_command 
+Exceptions module
+=================
+
+.. automodule:: cli.exceptions
     :members:
-
-
