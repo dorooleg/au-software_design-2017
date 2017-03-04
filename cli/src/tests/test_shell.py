@@ -44,7 +44,7 @@ class ShellTest(unittest.TestCase):
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('cat $FILE')
-        self.assertEqual(command_result.get_output(), 'Some example text{}'.format(os.linesep))
+        self.assertEqual(command_result.get_output(), 'Some example text\n')
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('cat $FILE | wc')

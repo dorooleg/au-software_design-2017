@@ -66,16 +66,13 @@ class CommandsTest(unittest.TestCase):
         self.assertEqual(cmd_result.get_output(), real_parent_dir)
         self.assertEqual(cmd_result.get_return_code(), 0)
 
-    # On my computer, Python adds `\n` when reading a file using open(...).read().
-    # So this test does not pass, because in `wc_file.txt` there is no trailing newline.
-    @unittest.expectedFailure
     def test_cat_command(self):
         cmd = self.build_cmd([Lexem(LexemType.STRING, 'cat', 0, 2),
                           Lexem(LexemType.QUOTED_STRING, wc_file_path, 4, 10)])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
         self.assertEqual(cmd_result.get_output(), 
-                         'this is a word.{}A line.'.format(os.linesep, os.linesep))
+                         'this is a word.\nA line.\n')
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_cat_command_from_stdin(self):
