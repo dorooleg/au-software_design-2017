@@ -47,8 +47,8 @@ class Parser:
         runnable, unparsed_lexems = Parser._parse_start(lexems)
 
         if unparsed_lexems:
-            raise ParseException('Not all lexems were parsed. The first starts\
-                                  at {}'.format(unparsed_lexems[0].get_position()))
+            raise ParseException('Not all lexems were parsed. The first starts '\
+                                 'at {}'.format(unparsed_lexems[0].get_position()))
 
         return runnable
 
@@ -61,12 +61,12 @@ class Parser:
                 of a type `desired_lexem_type`.
         """
         if not lexem_list:
-            raise ParseException('Expected lexem of type {}, found\
-                                  none.'.format(desired_lexem_type.name))
+            raise ParseException('Expected lexem of type {}, found ' \
+                                 'none.'.format(desired_lexem_type.name))
 
         if lexem_list[0].get_type() != desired_lexem_type:
-            raise ParseException('Expected lexem of type {}, found\
-                                  lexem of type {}.'.format(desired_lexem_type.name,
+            raise ParseException('Expected lexem of type {}, found '\
+                                 'lexem of type {}.'.format(desired_lexem_type.name,
                                                             lexem_list[0].get_type().name))
 
         return lexem_list[1:]
@@ -97,7 +97,7 @@ class Parser:
     @staticmethod
     def _parse_assignment(lexems):
         unprocessed_lexems = Parser._consume_one_lexem(lexems, LexemType.ASSIGNMENT)
-        command = CommandAssignment(lexems[0].get_value())
+        command = CommandAssignment([lexems[0].get_value()])
         return command, unprocessed_lexems
 
     @staticmethod

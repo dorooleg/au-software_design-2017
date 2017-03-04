@@ -18,7 +18,6 @@ class ShellTest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    @unittest.expectedFailure
     def test_sample_from_presentation(self):
         """A test from hwproj presentation.
 
@@ -34,27 +33,28 @@ class ShellTest(unittest.TestCase):
         """
         command_result = self.shell.process_input('echo "Hello, world!"')
         self.assertEqual(command_result.get_output(), 
-                'Hello, world!')
+                'Hello, world!\n')
         self.assertEqual(command_result.get_return_code(), 0)
 
+        # This `cd` is necessary for finding `example.txt` file.
+        command_result = self.shell.process_input('cd {}'.format(BASE_DIR))
         command_result = self.shell.process_input('FILE=example.txt')
         self.shell.apply_command_result(command_result)
         self.assertEqual(command_result.get_output(), '')
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('cat $FILE')
-        self.assertEqual(command_result.get_output(), 'Some example text')
+        self.assertEqual(command_result.get_output(), 'Some example text{}'.format(os.linesep))
         self.assertEqual(command_result.get_return_code(), 0)
 
-        command_result = self.shell.process_input('cat example.txt | wc')
+        command_result = self.shell.process_input('cat $FILE | wc')
         self.assertEqual(command_result.get_output(), '1 3 18')
         self.assertEqual(command_result.get_return_code(), 0)
 
         command_result = self.shell.process_input('echo 123 | wc')
-        self.assertEqual(command_result.get_output(), '1 1 3')
+        self.assertEqual(command_result.get_output(), '1 1 4')
         self.assertEqual(command_result.get_return_code(), 0)
 
-    @unittest.expectedFailure
     def test_subst_exit(self):
         """Test that string expansion works for substituting commands.
         """
@@ -64,7 +64,6 @@ class ShellTest(unittest.TestCase):
                 self.shell.process_input, '$x')
 
 
-    @unittest.expectedFailure
     def test_cat_wc(self):
         """A simple piped command: cd; cat smth | wc
         """
@@ -73,7 +72,6 @@ class ShellTest(unittest.TestCase):
         self.assertEqual(command_result.get_output(), '2 6 24')
 
 
-    @unittest.expectedFailure
     def test_cd_pwd(self):
         """A simple script execution: cd; pwd.
         """
@@ -81,10 +79,9 @@ class ShellTest(unittest.TestCase):
         command_result = self.shell.process_input('pwd')
         self.assertEqual(command_result.get_output(), BASE_DIR)
 
-    @unittest.expectedFailure
     def test_repeatable_commands(self):
         """A `long` session with a user should not fail.
         """
         for i in range(1000):
             command_result = self.shell.process_input('echo 1=1')
-            self.assertEqual(command_result.get_output(), '1=1')
+            self.assertEqual(command_result.get_output(), '1=1\n')

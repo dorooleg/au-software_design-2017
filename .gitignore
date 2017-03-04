@@ -7,3 +7,6 @@ __pycache__
 *.html
 
 **/_build/*
+
+shell_debug.log
+shell_info.log

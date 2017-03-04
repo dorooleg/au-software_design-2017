@@ -112,7 +112,7 @@ class Lexer:
 
         logging.debug('Lexer: {} was lexed '\
                       'to {}'.format(raw_str,
-                              ','.join(map(lambda lex: lex.get_type().name, lexem_list))))
+                                     ','.join(map(lambda lex: lex.get_type().name, lexem_list))))
         return lexem_list
 
     @staticmethod
@@ -142,8 +142,8 @@ class Lexer:
                 next_quote_idx += 1
 
             if next_quote_idx == raw_len:
-                raise LexException('A non-terminating quoted string starting\
-                        at position {}'.format(start_idx_in_original))
+                raise LexException('A non-terminating quoted string starting '\
+                                   'at position {}'.format(start_idx_in_original))
 
             return (Lexem(LexemType.QUOTED_STRING, raw_str[:next_quote_idx + 1],
                           start_idx_in_original,

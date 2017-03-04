@@ -28,7 +28,7 @@ class LexerTest(unittest.TestCase):
         self.assertEqual(lex_result[1].get_type(), LexemType.STRING)
         self.assertEqual(lex_result[1].get_value(), 'hello')
         self.assertEqual(lex_result[2].get_type(), LexemType.QUOTED_STRING)
-        self.assertEqual(lex_result[2].get_value(), '"maybe"')
+        self.assertEqual(lex_result[2].get_value(), 'maybe')
 
     def test_positions(self):
         lex_result = Lexer.get_lexems('cat  file.txt')

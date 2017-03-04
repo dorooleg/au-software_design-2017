@@ -134,7 +134,7 @@ class CommandChainPipe(CommandChain):
         modified_input = cmd_left_result.get_input_stream()
         modified_env = cmd_left_result.get_result_environment()
 
-        return self._cmd_right(modified_input, modified_env)
+        return self._cmd_right.run(modified_input, modified_env)
 
 
 class SingleCommand(RunnableCommand):
@@ -164,6 +164,9 @@ class CommandAssignment(SingleCommand):
 
     Command args:
         0 -- string of the form ``var=value``.
+
+    Assignemnt of quoted strings is **not** supported, e.g.
+    ``x="a b c"``.
     """
 
     def run(self, input_stream, env):
@@ -171,8 +174,10 @@ class CommandAssignment(SingleCommand):
         return_code = 0
         new_env = copy.copy(env)
 
-        equality_string = self_args_lst[0]
+        equality_string = self._args_lst[0]
+        logging.debug('Assignment {} is being applied.'.format(equality_string))
+
         first_eq_pos = equality_string.index('=')
-        var_name, value = equality_string[:first_eq_pos], equality_string[first_eq_pos + 1:]  
+        var_name, value = equality_string[:first_eq_pos], equality_string[first_eq_pos + 1:]
         new_env.set_var(var_name, value)
         return RunnableCommandResult(output, new_env, return_code)

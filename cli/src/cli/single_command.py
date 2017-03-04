@@ -11,7 +11,6 @@ given it's string representation.
 import logging
 import os.path
 import os
-import os.path
 import subprocess
 import sys
 
@@ -32,10 +31,31 @@ class CommandExternal(SingleCommand):
             depending on a command.
     """
 
-    COMMAND_FAILED = 1
+    COMMAND_NOT_FOUND = 1
 
     def run(self, input_stream, env):
-        pass
+        output = OutputStream()
+
+        cmd_name = self._args_lst[0]
+        cur_dir = env.get_cwd()
+        cmd_name_full = os.path.join(cur_dir, cmd_name)
+
+        modified_args = self._args_lst[:]
+        modified_args[0] = cmd_name_full
+
+        return_code = 0
+        try:
+            completed_process = subprocess.run(modified_args,
+                                               input=input_stream.get_input(),
+                                               stdout=subprocess.PIPE,
+                                               encoding=sys.stdout.encoding)
+            return_code = completed_process.returncode
+            output.write(completed_process.stdout)
+        except FileNotFoundError:
+            output.write('Command {} not found.'.format(cmd_name_full))
+            return_code = CommandExternal.COMMAND_NOT_FOUND
+
+        return RunnableCommandResult(output, env, return_code)
 
 
 class SingleCommandFactory:
@@ -68,9 +88,9 @@ class SingleCommandFactory:
     @staticmethod
     def _get_command_class_by_name(cmd_name):
         cmd_cls = SingleCommandFactory.registered_commands.get(cmd_name, CommandExternal)
-        logging.debug('SingleCommandFactory:' \
+        logging.debug('SingleCommandFactory: ' \
                       'Class {} is responsible for invoking command {}'.format(
-                    cmd_cls, cmd_name))
+                          cmd_cls, cmd_name))
         return cmd_cls
 
 
@@ -79,6 +99,8 @@ def _register_single_command(command_name):
     """
 
     def class_decorator(cls):
+        """Take a class and put it into SingleCommandFactory's dictionary.
+        """
         SingleCommandFactory.registered_commands[command_name] = cls
         return cls
 
@@ -91,13 +113,15 @@ class CommandEcho(SingleCommand):
 
     Command args:
         0 -- `echo`
+
         1..n -- strings. Those strings are written to the output, space-separated.
+            A new line is then written (as seen in bash).
 
     """
- 
+
     def run(self, input_stream, env):
         output = OutputStream()
-        output.write(' '.join(self._args_lst[1:]))
+        output.write_line(' '.join(self._args_lst[1:]))
 
         return RunnableCommandResult(output, env, 0)
 
@@ -141,7 +165,10 @@ class CommandWc(SingleCommand):
         num_words = CommandWc._get_num_words(input_str)
         num_bytes = len(input_str.encode(sys.stdin.encoding))
 
-        return (num_lines, num_words, num_bytes)
+        wc_result = (num_lines, num_words, num_bytes)
+        logging.debug('wc: result for "{}" is {}.'.format(input_str, wc_result))
+
+        return wc_result
 
     def run(self, input_stream, env):
         return_code = 0
@@ -155,16 +182,16 @@ class CommandWc(SingleCommand):
 
             if not os.path.isfile(full_fl_name):
                 output.write('wc: file {} not found.'.format(full_fl_name))
-                return_code = FILE_NOT_FOUND
+                return_code = CommandWc.FILE_NOT_FOUND
             else:
                 with open(full_fl_name, 'r') as opened_file:
                     wc_result = CommandWc._wc_routine(opened_file.read())
         elif num_args == 1:
-            wc_result = CommandWc._wc_routine(input_str.get_input())
+            wc_result = CommandWc._wc_routine(input_stream.get_input())
         else:
-            output.write('wc got wrong number of arguments: expected 0 or 1,\
-                    got {}.'.format(num_args - 1))
-            return_code = BAD_NUMBER_OF_ARGS
+            output.write('wc got wrong number of arguments: expected 0 or 1, '\
+                         'got {}.'.format(num_args - 1))
+            return_code = CommandWc.BAD_NUMBER_OF_ARGS
 
         if return_code == 0:
             n_lines, n_words, n_bytes = wc_result
@@ -191,7 +218,7 @@ class CommandCat(SingleCommand):
 
     FILE_NOT_FOUND = 1
     BAD_NUMBER_OF_ARGS = 2
- 
+
     def run(self, input_stream, env):
         return_code = 0
         output = OutputStream()
@@ -203,16 +230,16 @@ class CommandCat(SingleCommand):
 
             if not os.path.isfile(full_fl_name):
                 output.write('cat: file {} not found.'.format(full_fl_name))
-                return_code = FILE_NOT_FOUND
+                return_code = CommandCat.FILE_NOT_FOUND
             else:
                 with open(full_fl_name, 'r') as opened_file:
                     output.write(opened_file.read())
         elif num_args == 1:
             output.write(input_stream.get_input())
         else:
-            output.write('cat got wrong number of arguments: expected 0 or 1,\
-                    got {}.'.format(num_args - 1))
-            return_code = BAD_NUMBER_OF_ARGS
+            output.write('cat got wrong number of arguments: expected 0 or 1, '\
+                         'got {}.'.format(num_args - 1))
+            return_code = CommandCat.BAD_NUMBER_OF_ARGS
 
         return RunnableCommandResult(output, env, return_code)
 
@@ -223,14 +250,14 @@ class CommandPwd(SingleCommand):
     """
 
     BAD_NUMBER_OF_ARGS = 1
- 
+
     def run(self, input_stream, env):
         output = OutputStream()
 
         if len(self._args_lst) != 1:
-            output.write('pwd got wrong number of arguments: expected 0,\
-                    got {}.'.format(len(self._args_lst) - 1))
-            return_code = BAD_NUMBER_OF_ARGS
+            output.write('pwd got wrong number of arguments: expected 0, '\
+                         'got {}.'.format(len(self._args_lst) - 1))
+            return_code = CommandPwd.BAD_NUMBER_OF_ARGS
             return RunnableCommandResult(output, env, return_code)
 
         cur_dir = env.get_cwd()
@@ -247,13 +274,13 @@ class CommandExit(SingleCommand):
     """
 
     BAD_NUMBER_OF_ARGS = 1
- 
+
     def run(self, input_stream, env):
         if len(self._args_lst) != 1:
             output = OutputStream()
-            output.write('exit got wrong number of arguments: expected 0,\
-                    got {}.'.format(len(self._args_lst) - 1))
-            return_code = BAD_NUMBER_OF_ARGS
+            output.write('exit got wrong number of arguments: expected 0, '\
+                         'got {}.'.format(len(self._args_lst) - 1))
+            return_code = CommandExit.BAD_NUMBER_OF_ARGS
             return RunnableCommandResult(output, env, return_code)
 
         raise ExitException()
@@ -273,22 +300,24 @@ class CommandCd(SingleCommand):
 
     NEW_DIR_INVALID = 1
     BAD_NUMBER_OF_ARGS = 2
- 
+
     def run(self, input_stream, env):
         output = OutputStream()
         return_code = 0
 
         if len(self._args_lst) != 2:
-            output.write('cd got wrong number of arguments: expected 1,\
-                    got {}.'.format(len(self._args_lst) - 1))
-            return_code = BAD_NUMBER_OF_ARGS
+            output.write('cd got wrong number of arguments: expected 1, '\
+                         'got {}.'.format(len(self._args_lst) - 1))
+            return_code = CommandCd.BAD_NUMBER_OF_ARGS
             return RunnableCommandResult(output, env, return_code)
 
         cur_dir = env.get_cwd()
         new_dir = os.path.join(cur_dir, self._args_lst[1])
+        logging.debug('cd: trying to change dir to {}.'.format(new_dir))
+
         if not os.path.isdir(new_dir):
             output.write('{} is not a directory.'.format(new_dir))
-            return_code = NEW_DIR_INVALID
+            return_code = CommandCd.NEW_DIR_INVALID
         else:
             env.set_cwd(new_dir)
 
