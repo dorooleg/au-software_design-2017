@@ -84,4 +84,4 @@ class ShellTest(unittest.TestCase):
         """
         for i in range(1000):
             command_result = self.shell.process_input('echo 1=1')
-            self.assertEqual(command_result.get_output(), '1=1\n')
+            self.assertEqual(command_result.get_output(), '1=1{}'.format(os.linesep))

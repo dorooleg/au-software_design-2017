@@ -38,7 +38,7 @@ class CommandsTest(unittest.TestCase):
                                  Lexem(LexemType.QUOTED_STRING, "'print(\"hello\")'", 11, 20)])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), 'hello\n')
+        self.assertEqual(cmd_result.get_output(), 'hello{}'.format(os.linesep))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_external_command_nonexistant(self):
@@ -105,7 +105,7 @@ class CommandsTest(unittest.TestCase):
                            Lexem(LexemType.QUOTED_STRING, '"bla bla    bla"', 4, 15)])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), 'bla bla    bla\n')
+        self.assertEqual(cmd_result.get_output(), 'bla bla    bla{}'.format(os.linesep))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
         cmd = self.build_cmd([Lexem(LexemType.STRING, 'echo', 0, 3),
@@ -113,7 +113,7 @@ class CommandsTest(unittest.TestCase):
                            Lexem(LexemType.STRING, '234', 7, 10)])
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), '1 234\n')
+        self.assertEqual(cmd_result.get_output(), '1 234{}'.format(os.linesep))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_wc_command(self):
@@ -123,7 +123,8 @@ class CommandsTest(unittest.TestCase):
         cmd = CommandChainPipe(cmd_1, cmd_2)
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), '1 4 15')
+        exp_length = 14 + len(os.linesep)
+        self.assertEqual(cmd_result.get_output(), '1 4 {}'.format(exp_length))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_wc_command_file(self):
@@ -141,7 +142,8 @@ class CommandsTest(unittest.TestCase):
         cmd = CommandChainPipe(cmd_1, cmd_2)
         cmd_result = cmd.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), '1 1 8')
+        exp_length = 7 + len(os.linesep)
+        self.assertEqual(cmd_result.get_output(), '1 1 {}'.format(exp_length))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_pipe_three_cmd(self):
@@ -166,7 +168,8 @@ class CommandsTest(unittest.TestCase):
         pipe_1_2_3 = CommandChainPipe(pipe_1_2, cmd_3)
         cmd_result = pipe_1_2_3.run(self.init_input, self.init_env)
 
-        self.assertEqual(cmd_result.get_output(), '1 1 5')
+        exp_length = 4 + len(os.linesep)
+        self.assertEqual(cmd_result.get_output(), '1 1 {}'.format(exp_length))
         self.assertEqual(cmd_result.get_return_code(), 0)
 
     def test_piped_assignment(self):
