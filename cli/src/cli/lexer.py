@@ -56,7 +56,12 @@ class Lexem:
 
     def get_value(self):
         """Return string representation of this lexem.
+
+        Quotes are stripped from QUOTED_STRING.
         """
+        if self.get_type() == LexemType.QUOTED_STRING:
+            return self._val[1:-1]
+
         return self._val
 
     def get_type(self):

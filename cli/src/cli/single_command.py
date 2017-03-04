@@ -11,10 +11,13 @@ given it's string representation.
 import logging
 import os.path
 import os
+import os.path
 import subprocess
+import sys
 
-from cli.commands import SingleCommand
+from cli.commands import SingleCommand, RunnableCommandResult
 from cli.exceptions import ExitException
+from cli.streams import OutputStream
 
 
 class CommandExternal(SingleCommand):
@@ -93,7 +96,10 @@ class CommandEcho(SingleCommand):
     """
  
     def run(self, input_stream, env):
-        pass
+        output = OutputStream()
+        output.write(' '.join(self._args_lst[1:]))
+
+        return RunnableCommandResult(output, env, 0)
 
 
 @_register_single_command('wc')
@@ -113,9 +119,58 @@ class CommandWc(SingleCommand):
     """
 
     FILE_NOT_FOUND = 1
- 
+    BAD_NUMBER_OF_ARGS = 2
+
+    @staticmethod
+    def _get_num_words(input_str):
+        num_words = 0
+        last_was_char = False
+
+        for ch in input_str:
+            if not ch.isspace():
+                num_words += not last_was_char
+                last_was_char = True
+            else:
+                last_was_char = False
+
+        return num_words
+
+    @staticmethod
+    def _wc_routine(input_str):
+        num_lines = len(input_str.splitlines())
+        num_words = CommandWc._get_num_words(input_str)
+        num_bytes = len(input_str.encode(sys.stdin.encoding))
+
+        return (num_lines, num_words, num_bytes)
+
     def run(self, input_stream, env):
-        pass
+        return_code = 0
+        output = OutputStream()
+        wc_result = None
+
+        num_args = len(self._args_lst)
+        if num_args == 2:
+            fl_name = self._args_lst[1]
+            full_fl_name = os.path.join(env.get_cwd(), fl_name)
+
+            if not os.path.isfile(full_fl_name):
+                output.write('wc: file {} not found.'.format(full_fl_name))
+                return_code = FILE_NOT_FOUND
+            else:
+                with open(full_fl_name, 'r') as opened_file:
+                    wc_result = CommandWc._wc_routine(opened_file.read())
+        elif num_args == 1:
+            wc_result = CommandWc._wc_routine(input_str.get_input())
+        else:
+            output.write('wc got wrong number of arguments: expected 0 or 1,\
+                    got {}.'.format(num_args - 1))
+            return_code = BAD_NUMBER_OF_ARGS
+
+        if return_code == 0:
+            n_lines, n_words, n_bytes = wc_result
+            output.write('{} {} {}'.format(n_lines, n_words, n_bytes))
+
+        return RunnableCommandResult(output, env, return_code)
 
 
 @_register_single_command('cat')
@@ -135,19 +190,53 @@ class CommandCat(SingleCommand):
     """
 
     FILE_NOT_FOUND = 1
+    BAD_NUMBER_OF_ARGS = 2
  
     def run(self, input_stream, env):
-        pass
+        return_code = 0
+        output = OutputStream()
+
+        num_args = len(self._args_lst)
+        if num_args == 2:
+            fl_name = self._args_lst[1]
+            full_fl_name = os.path.join(env.get_cwd(), fl_name)
+
+            if not os.path.isfile(full_fl_name):
+                output.write('cat: file {} not found.'.format(full_fl_name))
+                return_code = FILE_NOT_FOUND
+            else:
+                with open(full_fl_name, 'r') as opened_file:
+                    output.write(opened_file.read())
+        elif num_args == 1:
+            output.write(input_stream.get_input())
+        else:
+            output.write('cat got wrong number of arguments: expected 0 or 1,\
+                    got {}.'.format(num_args - 1))
+            return_code = BAD_NUMBER_OF_ARGS
+
+        return RunnableCommandResult(output, env, return_code)
 
 
 @_register_single_command('pwd')
 class CommandPwd(SingleCommand):
     """`pwd` command: print the current working directory.
     """
+
+    BAD_NUMBER_OF_ARGS = 1
  
     def run(self, input_stream, env):
-        pass
+        output = OutputStream()
 
+        if len(self._args_lst) != 1:
+            output.write('pwd got wrong number of arguments: expected 0,\
+                    got {}.'.format(len(self._args_lst) - 1))
+            return_code = BAD_NUMBER_OF_ARGS
+            return RunnableCommandResult(output, env, return_code)
+
+        cur_dir = env.get_cwd()
+        output.write(cur_dir)
+
+        return RunnableCommandResult(output, env, 0)
 
 @_register_single_command('exit')
 class CommandExit(SingleCommand):
@@ -156,9 +245,18 @@ class CommandExit(SingleCommand):
     Performs exiting via throwing an exception,
     so all further commands are not run.
     """
+
+    BAD_NUMBER_OF_ARGS = 1
  
     def run(self, input_stream, env):
-        pass
+        if len(self._args_lst) != 1:
+            output = OutputStream()
+            output.write('exit got wrong number of arguments: expected 0,\
+                    got {}.'.format(len(self._args_lst) - 1))
+            return_code = BAD_NUMBER_OF_ARGS
+            return RunnableCommandResult(output, env, return_code)
+
+        raise ExitException()
 
 
 @_register_single_command('cd')
@@ -168,7 +266,30 @@ class CommandCd(SingleCommand):
     Command args:
         0 -- `cd`
         1 -- a new filepath. Can be relative or absolute.
+
+    Returns NEW_DIR_INVALID if the directory does not exist.
+    Returns BAD_NUMBER_OF_ARGS if wrong number of arguments is supplied.
     """
+
+    NEW_DIR_INVALID = 1
+    BAD_NUMBER_OF_ARGS = 2
  
     def run(self, input_stream, env):
-        pass
+        output = OutputStream()
+        return_code = 0
+
+        if len(self._args_lst) != 2:
+            output.write('cd got wrong number of arguments: expected 1,\
+                    got {}.'.format(len(self._args_lst) - 1))
+            return_code = BAD_NUMBER_OF_ARGS
+            return RunnableCommandResult(output, env, return_code)
+
+        cur_dir = env.get_cwd()
+        new_dir = os.path.join(cur_dir, self._args_lst[1])
+        if not os.path.isdir(new_dir):
+            output.write('{} is not a directory.'.format(new_dir))
+            return_code = NEW_DIR_INVALID
+        else:
+            env.set_cwd(new_dir)
+
+        return RunnableCommandResult(output, env, return_code)

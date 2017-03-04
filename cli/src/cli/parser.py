@@ -97,7 +97,7 @@ class Parser:
     @staticmethod
     def _parse_assignment(lexems):
         unprocessed_lexems = Parser._consume_one_lexem(lexems, LexemType.ASSIGNMENT)
-        command = CommandAssignment(lexems[0])
+        command = CommandAssignment(lexems[0].get_value())
         return command, unprocessed_lexems
 
     @staticmethod

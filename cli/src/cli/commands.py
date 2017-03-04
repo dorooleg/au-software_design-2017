@@ -20,6 +20,9 @@ result.
 """
 from abc import ABCMeta, abstractmethod
 import logging
+import copy
+
+from cli.streams import OutputStream
 
 
 class RunnableCommandResult:
@@ -29,11 +32,13 @@ class RunnableCommandResult:
     of values (output, return code, etc.).
     """
 
-    def __init__(self, input_stream, new_env, ret_code):
+    def __init__(self, output_stream, new_env, ret_code):
         """ Create CommandResult out of <output_stream, new_env, ret_code>.
 
-        `input_stream` (:module:`streams.InputStream`): an input stream
-            of the program, from which we can read what the program wrote;
+        `output_stream` (:module:`streams.OutputStream`): an output stream
+            of the program. We convert
+            it to InputStream in order
+            to read later what the program wrote;
         `new_env` (:module:`environment.Environment`): a new environment
             in which shell should operate after executing the program.
             For example:
@@ -41,7 +46,7 @@ class RunnableCommandResult:
             should return a new environment with $x equal to `1`;
         `ret_code` (int): a return code.
         """
-        self._input_stream = input_stream
+        self._input_stream = output_stream.to_input_stream()
         self._new_env = new_env
         self._ret_code = ret_code
 
@@ -56,7 +61,7 @@ class RunnableCommandResult:
         Returns:
             str: a string representation of output.
         """
-        return self._input_stream.read_input()
+        return self._input_stream.get_input()
 
     def get_input_stream(self):
         """Getter for the input stream.
@@ -121,7 +126,15 @@ class CommandChainPipe(CommandChain):
     """
 
     def run(self, input_stream, env):
-        pass
+        cmd_left_result = self._cmd_left.run(input_stream, env)
+
+        if cmd_left_result.get_return_code():
+            return cmd_left_result
+
+        modified_input = cmd_left_result.get_input_stream()
+        modified_env = cmd_left_result.get_result_environment()
+
+        return self._cmd_right(modified_input, modified_env)
 
 
 class SingleCommand(RunnableCommand):
@@ -141,7 +154,7 @@ class SingleCommand(RunnableCommand):
         Every descandant of this class describes which arguments it expects
         to see.
         """
-        self.args_lst = args_lst
+        self._args_lst = args_lst
 
 
 class CommandAssignment(SingleCommand):
@@ -154,4 +167,12 @@ class CommandAssignment(SingleCommand):
     """
 
     def run(self, input_stream, env):
-        pass
+        output = OutputStream()
+        return_code = 0
+        new_env = copy.copy(env)
+
+        equality_string = self_args_lst[0]
+        first_eq_pos = equality_string.index('=')
+        var_name, value = equality_string[:first_eq_pos], equality_string[first_eq_pos + 1:]  
+        new_env.set_var(var_name, value)
+        return RunnableCommandResult(output, new_env, return_code)
