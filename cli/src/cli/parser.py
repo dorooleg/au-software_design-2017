@@ -3,7 +3,7 @@
 Parsing is one of the later steps in
 program compilation or intepreting.
 
-It ensures that the stream of lexems
+It ensures that the stream of lexemes
 form a valid program. The result
 is a tree that represents a program.
 
@@ -17,17 +17,17 @@ from cli.lexer import LexemType
 
 
 class Parser:
-    """A static class for parsing a list of lexems.
+    """A static class for parsing a list of lexemes.
 
-    Parser ensures that a stream of lexems
+    Parser ensures that a stream of lexemes
     match a syntactic structure of a valid command.
     It also builds a representation of this
     command alongway.
     """
 
     @staticmethod
-    def build_command(lexems):
-        """Build :class:`commands.RunnableCommand` out of list of lexems.
+    def build_command(lexemes):
+        """Build :class:`commands.RunnableCommand` out of list of lexemes.
 
         Our grammar is as following::
 
@@ -36,25 +36,25 @@ class Parser:
             <assignment> ::= ASSIGNMENT
             <single_command> ::= STRING (STRING | QUOTED_STRING | ASSIGNMENT)*
 
-        where ASSIGNMENT, QUOTED_STRING, STRING and PIPE are lexems.
+        where ASSIGNMENT, QUOTED_STRING, STRING and PIPE are lexemes.
 
         Every rule is implemented as a static method with name _parse_`smth`.
         It returns a pair:
 
             - a resulting :class:`commands.RunnableCommand`
-            - a list of unparsed lexems
+            - a list of unparsed lexemes
         """
-        runnable, unparsed_lexems = Parser._parse_start(lexems)
+        runnable, unparsed_lexemes = Parser._parse_start(lexemes)
 
-        if unparsed_lexems:
-            raise ParseException('Not all lexems were parsed. The first starts '\
-                                 'at {}'.format(unparsed_lexems[0].get_position()))
+        if unparsed_lexemes:
+            raise ParseException('Not all lexemes were parsed. The first starts '\
+                                 'at {}'.format(unparsed_lexemes[0].get_position()))
 
         return runnable
 
     @staticmethod
     def _consume_one_lexem(lexem_list, desired_lexem_type):
-        """Consume a lexem of the desired type. Return list of lexems without consumed one.
+        """Consume a lexem of the desired type. Return list of lexemes without consumed one.
 
         Raises:
             ParseException, if the list is empty or the first lexem is not
@@ -72,48 +72,48 @@ class Parser:
         return lexem_list[1:]
 
     @staticmethod
-    def _parse_start(lexems):
-        first_command, unparsed_lexems = Parser._parse_command(lexems)
+    def _parse_start(lexemes):
+        first_command, unparsed_lexemes = Parser._parse_command(lexemes)
 
         result_command = first_command
-        while unparsed_lexems:
-            unparsed_lexems = Parser._consume_one_lexem(unparsed_lexems, LexemType.PIPE)
-            current_command, unparsed_lexems = Parser._parse_command(unparsed_lexems)
+        while unparsed_lexemes:
+            unparsed_lexemes = Parser._consume_one_lexem(unparsed_lexemes, LexemType.PIPE)
+            current_command, unparsed_lexemes = Parser._parse_command(unparsed_lexemes)
 
             result_command = CommandChainPipe(result_command, current_command)
 
-        return result_command, unparsed_lexems
+        return result_command, unparsed_lexemes
 
     @staticmethod
-    def _parse_command(lexems):
+    def _parse_command(lexemes):
         try:
-            return Parser._parse_assignment(lexems)
+            return Parser._parse_assignment(lexemes)
         except ParseException:
             pass
 
-        return Parser._parse_single_command(lexems)
+        return Parser._parse_single_command(lexemes)
 
 
     @staticmethod
-    def _parse_assignment(lexems):
-        unprocessed_lexems = Parser._consume_one_lexem(lexems, LexemType.ASSIGNMENT)
-        command = CommandAssignment([lexems[0].get_value()])
-        return command, unprocessed_lexems
+    def _parse_assignment(lexemes):
+        unprocessed_lexemes = Parser._consume_one_lexem(lexemes, LexemType.ASSIGNMENT)
+        command = CommandAssignment([lexemes[0].get_value()])
+        return command, unprocessed_lexemes
 
     @staticmethod
-    def _parse_single_command(lexems):
-        rest_lexems = Parser._consume_one_lexem(lexems, LexemType.STRING)
+    def _parse_single_command(lexemes):
+        rest_lexemes = Parser._consume_one_lexem(lexemes, LexemType.STRING)
 
-        cmd_name_and_args = [lexems[0]]
-        while rest_lexems:
-            first_lex_type = rest_lexems[0].get_type()
+        cmd_name_and_args = [lexemes[0]]
+        while rest_lexemes:
+            first_lex_type = rest_lexemes[0].get_type()
 
             if first_lex_type in (LexemType.QUOTED_STRING, LexemType.STRING,
                                   LexemType.ASSIGNMENT):
-                cmd_name_and_args.append(rest_lexems[0])
-                rest_lexems = Parser._consume_one_lexem(rest_lexems, first_lex_type)
+                cmd_name_and_args.append(rest_lexemes[0])
+                rest_lexemes = Parser._consume_one_lexem(rest_lexemes, first_lex_type)
             else:
                 break
 
         command = SingleCommandFactory.build_command(cmd_name_and_args)
-        return command, rest_lexems
+        return command, rest_lexemes

@@ -6,7 +6,7 @@ all the shell work:
     - read an input
     - call an appropriate module to preprocess input
     - call an appropriate module to lex input
-    - call an appropriate module to parse lexems
+    - call an appropriate module to parse lexemes
     - invoke the program represented by (sort of) AST.
 
 """
@@ -46,8 +46,8 @@ class Shell:
             :class:`commands.RunnableCommandResult`.
         """
         preprocessed_inp = Preprocessor.substitute_environment_variables(inp, self._env)
-        lexems = Lexer.get_lexems(preprocessed_inp)
-        runnable = Parser.build_command(lexems)
+        lexemes = Lexer.get_lexemes(preprocessed_inp)
+        runnable = Parser.build_command(lexemes)
         return runnable.run(InputStream(), self._env)
 
     def apply_command_result(self, command_result):

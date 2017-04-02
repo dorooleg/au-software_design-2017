@@ -59,7 +59,7 @@ class CommandExternal(SingleCommand):
 
 
 class SingleCommandFactory:
-    """A class that is repsonsible for building Single Commands.
+    """A class that is responsible for building Single Commands.
 
     This class knows which commands exist in shell.
     """
@@ -68,14 +68,14 @@ class SingleCommandFactory:
 
     @staticmethod
     def build_command(cmd_name_and_args_lexem_lst):
-        """Build a single command out of list of lexems representing it's arguments.
+        """Build a single command out of list of lexemes representing it's arguments.
 
         Args:
             cmd_name_and_args_lexem_lst (list[:class:`lexer.Lexem`]): a list
-                of lexems. The first one must be STRING that represents a command
+                of lexemes. The first one must be STRING that represents a command
                 name. The rest are STRING or QUOTED_STRING 's.
 
-        All string representations of lexems are passed to a corresponding
+        All string representations of lexemes are passed to a corresponding
         SingleCommand descendant.
         """
         cmd_name = cmd_name_and_args_lexem_lst[0]

@@ -15,7 +15,7 @@ from cli.exceptions import LexException
 class LexemType(enum.Enum):
     """Possible types of Lexems that Lexer produces.
 
-    These are possible lexems:
+    These are possible lexemes:
 
        - ``QUOTED_STRING`` is a sequence of characters inside double
             or single quotes;
@@ -87,14 +87,14 @@ class Lexer:
     """
 
     @staticmethod
-    def get_lexems(raw_str):
-        """Scan the string left-to-right, output list of lexems.
+    def get_lexemes(raw_str):
+        """Scan the string left-to-right, output list of lexemes.
 
         Args:
             raw_str (str): a string to lex.
 
         Returns:
-            list[:class:`.Lexem`] -- the resulting lexems.
+            list[:class:`.Lexem`] -- the resulting lexemes.
 
         Raises:
             :class:`exceptions.LexException`: if some quoted string started but never ends.
