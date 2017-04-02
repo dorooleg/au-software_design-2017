@@ -1,0 +1,17 @@
+language: python
+
+python:
+    - "3.6"
+
+before_script:
+    export PYTHONPATH=$PYTHONPATH:$(readlink -f ./cli/src)
+
+script: coverage run -m unittest discover -s ./cli/src/tests
+
+before_install:
+    - pip install pylint
+    - pip install codecov
+
+after_success:
+    - codecov
+    - pylint --no-docstring-rgx=_* ./cli/src/cli 
