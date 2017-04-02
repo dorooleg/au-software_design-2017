@@ -53,6 +53,10 @@ class Parser:
         return runnable
 
     @staticmethod
+    def first_lex_matches_type(lexemes, tp):
+        return lexemes and lexemes[0].get_type() == tp
+            
+    @staticmethod
     def _consume_one_lexem(lexem_list, desired_lexem_type):
         """Consume a lexem of the desired type. Return list of lexemes without consumed one.
 
@@ -86,10 +90,8 @@ class Parser:
 
     @staticmethod
     def _parse_command(lexemes):
-        try:
+        if Parser.first_lex_matches_type(lexemes, LexemType.ASSIGNMENT):
             return Parser._parse_assignment(lexemes)
-        except ParseException:
-            pass
 
         return Parser._parse_single_command(lexemes)
 
