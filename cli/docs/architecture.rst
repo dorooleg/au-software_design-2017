@@ -2,13 +2,10 @@
 Architecture of Command-Line Interface prototype
 ================================================
 
-Classes diagram (created with ``pyreverse3``, save it to your computer in order to zoom):
+Class diagram (created with ``Visual Paradigm``):
 
-.. image:: classes.png
+.. image:: cli_class_diagram.jpg
 
-Modules diagram (created with ``pyreverse3``):
-
-.. image:: modules.png
 
 | The main class is :class:`cli.shell.Shell`.  
 | It prompts user for an input, then passes it to a :class:`cli.preprocessor.Preprocessor`.  
