@@ -1,5 +1,4 @@
-"""Abstraction of shell environment.
-"""
+"""Abstraction of shell environment"""
 import pathlib
 import os
 import logging
@@ -13,14 +12,12 @@ class Environment:
     """
 
     def __init__(self):
-        """Create an empty environment.
-        """
+        """Create an empty environment"""
         self._var_to_value = dict()
         self._current_working_directory = pathlib.Path(os.getcwd())
 
     def get_var(self, name):
-        """Get variable value by name.
-        """
+        """Get variable value by name"""
         return self._var_to_value.get(name, '')
 
     def set_var(self, name, value):
@@ -33,8 +30,7 @@ class Environment:
         self._var_to_value[name] = value
 
     def get_cwd(self):
-        """Get string representation of current working directory.
-        """
+        """Get string representation of current working directory"""
         return str(self._current_working_directory)
 
     def set_cwd(self, dir_name):

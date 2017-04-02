@@ -32,8 +32,7 @@ class Shell:
     """
 
     def __init__(self):
-        """Create a Shell instance with empty environment.
-        """
+        """Create a Shell instance with empty environment"""
         self._env = Environment()
 
     def process_input(self, inp):

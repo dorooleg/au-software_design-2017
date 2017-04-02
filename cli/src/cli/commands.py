@@ -51,8 +51,7 @@ class RunnableCommandResult:
         self._ret_code = ret_code
 
     def get_return_code(self):
-        """Getter for the return code.
-        """
+        """Getter for the return code"""
         return self._ret_code
 
     def get_output(self):
@@ -64,13 +63,11 @@ class RunnableCommandResult:
         return self._input_stream.get_input()
 
     def get_input_stream(self):
-        """Getter for the input stream.
-        """
+        """Getter for the input stream"""
         return self._input_stream
 
     def get_result_environment(self):
-        """Getter for the new environment.
-        """
+        """Getter for the new environment"""
         return self._new_env
 
 

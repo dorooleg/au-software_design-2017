@@ -16,8 +16,7 @@ class _BaseStream:
     """
 
     def __init__(self):
-        """Construct a Stream (both Input and Output).
-        """
+        """Construct a Stream (both Input and Output)"""
         self._io_obj = StringIO()
 
 
@@ -28,8 +27,7 @@ class InputStream(_BaseStream):
     """
 
     def get_input(self):
-        """Read the whole input (as a string).
-        """
+        """Read the whole input (as a string)"""
         return self._io_obj.getvalue()
 
 
@@ -40,13 +38,11 @@ class OutputStream(_BaseStream):
     """
 
     def write(self, string):
-        """Write a string to output stream.
-        """
+        """Write a string to output stream"""
         self._io_obj.write(string)
 
     def write_line(self, string):
-        """Write a newline-trailed string to output stream.
-        """
+        """Write a newline-trailed string to output stream"""
         self.write(string)
         self.write(os.linesep)
 
