@@ -322,3 +322,46 @@ class CommandCd(SingleCommand):
             env.set_cwd(new_dir)
 
         return RunnableCommandResult(output, env, return_code)
+
+@_register_single_command('ls')
+class CommandLs(SingleCommand):
+    """`ls` command: print list of files
+
+    Command args:
+        0 -- `ls`
+
+        1 (optional) -- a dirname.
+
+    Returns `FILE_NOT_FOUND` exit code if file was provided,
+    but was not found.
+    """
+
+    FILE_NOT_FOUND = 1
+    BAD_NUMBER_OF_ARGS = 2
+
+    def run(self, input_stream, env):
+        return_code = 0
+        output = OutputStream()
+
+        num_args = len(self._args_lst)
+        if num_args == 2:
+            dir_name = self._args_lst[1]
+            full_dir_name = os.path.join(env.get_cwd(), dir_name)
+
+            if not os.path.isdir(full_dir_name):
+                output.write('ls: die {} not found.'.format(full_dir_name))
+                return_code = CommandCat.FILE_NOT_FOUND
+            else:
+                for f in os.listdir(full_dir_name):
+                    output.write(f)
+                    output.write("  ")
+        elif num_args == 1:
+            for f in os.listdir(env.get_cwd()):
+                output.write(f)
+                output.write("  ")
+        else:
+            output.write('ls got wrong number of arguments: expected 0 or 1, '\
+                         'got {}.'.format(num_args - 1))
+            return_code = CommandCat.BAD_NUMBER_OF_ARGS
+
+        return RunnableCommandResult(output, env, return_code)

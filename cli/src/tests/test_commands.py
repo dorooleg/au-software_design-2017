@@ -5,7 +5,7 @@ import sys
 
 from cli.exceptions import ExitException
 from cli.commands import CommandChainPipe, CommandAssignment
-from cli.single_command import CommandExternal, CommandExit, CommandCd, CommandCat, CommandPwd, CommandEcho, CommandWc, SingleCommandFactory
+from cli.single_command import CommandExternal, CommandExit, CommandCd, CommandCat, CommandPwd, CommandEcho, CommandWc, CommandLs, SingleCommandFactory
 from cli.lexer import Lexem, LexemType
 from cli.environment import Environment
 from cli.streams import InputStream
@@ -181,4 +181,23 @@ class CommandsTest(unittest.TestCase):
         self.assertEqual(cmd_result.get_result_environment().get_var('tEq'), '1')
         self.assertEqual(cmd_result.get_result_environment().get_var('x'), 'a')
         self.assertEqual(cmd_result.get_output(), '')
+        self.assertEqual(cmd_result.get_return_code(), 0)
+
+    def test_ls_command_empty(self):
+        cmd = self.build_cmd([Lexem(LexemType.STRING, 'ls', 0, 2),
+                          Lexem(LexemType.QUOTED_STRING, '.', 4, 10)])
+
+        cmd_result = cmd.run(self.init_input, self.init_env)
+
+        self.assertEqual(cmd_result.get_output(),
+                         'test_environment.py  test_lexer.py  test_parser.py  test_streams.py  .test_commands.py.swp  .test_shell.py.swp  test_shell.py  wc_file.txt  example.txt  test_commands.py  test_preprocessor.py  ')
+        self.assertEqual(cmd_result.get_return_code(), 0)
+
+    def test_ls_command_empty(self):
+        cmd = self.build_cmd([Lexem(LexemType.STRING, 'ls', 0, 2)])
+
+        cmd_result = cmd.run(self.init_input, self.init_env)
+
+        self.assertEqual(cmd_result.get_output(),
+                         'test_environment.py  test_lexer.py  test_parser.py  test_streams.py  .test_commands.py.swp  .test_shell.py.swp  test_shell.py  wc_file.txt  example.txt  test_commands.py  test_preprocessor.py  ')
         self.assertEqual(cmd_result.get_return_code(), 0)
