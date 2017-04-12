@@ -183,7 +183,7 @@ class CommandsTest(unittest.TestCase):
         self.assertEqual(cmd_result.get_output(), '')
         self.assertEqual(cmd_result.get_return_code(), 0)
 
-    def test_ls_command_empty(self):
+    def test_ls_command(self):
         cmd = self.build_cmd([Lexem(LexemType.STRING, 'ls', 0, 2),
                           Lexem(LexemType.QUOTED_STRING, '.', 4, 10)])
 
